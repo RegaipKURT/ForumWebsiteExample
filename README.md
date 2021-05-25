@@ -3,7 +3,7 @@
 ## Açıklamalar
 Bu web sitesi örneği Python 3.8.10 ve Flask 2.0.1 versiyonu kullanılarak deneme amaçlı oluşturulmuştur.
 
-***Flask 2.0 versiyonundan itibaren değişmiş olan yeni routing metodları kullanıldığından 2.0 önceki versiyonlarda hata verecektir!***
+***Flask 2.0 versiyonundan itibaren değişmiş olan yeni routing metodları kullanıldığından 2.0 öncesi versiyonlarda hata verecektir!***
 
 Veritabanı SQLite veritabanı kullanılarak oluşturulmuştur. Tek bir database dosyası içinde oluşturulan Users, Messages ve Posts tabloları kullanılarak bir forum sitesindeki en temel işlemler 
 yerine getirilmeye çalışılmıştır.
