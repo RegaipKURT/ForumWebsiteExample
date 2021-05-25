@@ -38,6 +38,7 @@ class Message(db_messages.Model):
     ownerId = db_messages.Column(db_messages.Integer, nullable=False)
     postId = db_messages.Column(db_messages.Integer, nullable=False)
     message = db_messages.Column(db_messages.String(500), nullable=False)
+    date = db_messages.Column(db_messages.DateTime)
 
 class Post(db_posts.Model):
     postId = db_posts.Column(db_posts.Integer, primary_key=True)
@@ -45,6 +46,7 @@ class Post(db_posts.Model):
     header = db_posts.Column(db_posts.String(100), default="Konu Yok")
     body = db_posts.Column(db_posts.String(5000), nullable=False)
     openToComments = db_posts.Column(db_posts.Boolean)
+    date = db_posts.Column(db_posts.DateTime)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -68,12 +70,35 @@ def post(post_id):
 
 @app.get("/login")
 def login():
-    return "This is login page!"
+    return render_template("login.html")
 
+@app.get("/signup")
+def signup():
+    return render_template("signup.html")
+
+@app.post('/signup')
+def signupUser():
+    return render_template("login.html")
+
+@app.post('/login')
+def loginUser():
+    return render_template("index.html")
+
+#user's settings page
 @app.get("/settings")
 @login_required
 def setting():
     return current_user.userId
+
+@app.get("/about")
+def about():
+    return render_template("about.html")
+
+#user profile page defined with username
+@app.get("/profile/<string:username>")
+@login_required
+def profilePage():
+    return render_template("profile.html")
 
 if __name__=='__main__':
     app.run("0.0.0.0", port=8000)

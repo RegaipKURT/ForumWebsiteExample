@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="{{url_for('static', filename='js/login_scripts.js')}}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/login_syle.css')}}">
+
+
+
+{% block body %}    
+    <div class="container">
+        <div class="row">
+			<div class="col-md-5 mx-auto">
+			  <div id="second">
+                <br><br>
+			      <div class="myform form ">
+                        <div class="logo mb-3">
+                           <div class="col-md-12 text-center">
+                              <h1 >Üye Ol</h1>
+                           </div>
+                        </div>
+                        <form action="/signup" method="post" name="registration">
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">Kullanıcı Adı</label>
+                              <input required type="text"  name="username" class="form-control" id="firstname" aria-describedby="emailHelp" placeholder="Kullanıcı Adı">
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">E-Mail Adresi</label>
+                              <input required type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="E-mail">
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">Parola</label>
+                              <input required type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Parola">
+                           </div>
+                           <br>
+                           <div class="form-group">
+                              <p class="text-center">Üye olmadan önce okuyun: <a href="/about">Uyarı!</a></p>
+                           </div>
+                           <div class="col-md-12 text-center mb-3">
+                              <button type="submit" method="post" class="btn btn-block mybtn btn-primary tx-tfm">Üye Ol</button>
+                           </div>
+                           <br>
+                           <div class="col-md-12 ">
+                              <div class="form-group">
+                                 <p class="text-center">Hesabınız Var Mı? <a href="/login" id="signin"> Giriş Yapın!</a></p>
+                              </div>
+                           </div>
+                            </div>
+                        </form>
+                     </div>
+			</div>
+		</div>
+      </div>   
+{% endblock %}

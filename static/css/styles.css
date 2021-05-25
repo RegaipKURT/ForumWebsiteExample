@@ -3935,6 +3935,16 @@ textarea.form-control-lg {
   display: block;
 }
 
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3%;
+  background-color: #6c757d;
+  text-align: center;
+}
+
 .navbar {
   position: relative;
   display: flex;
