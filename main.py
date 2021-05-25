@@ -6,8 +6,7 @@ from flask_login import LoginManager, UserMixin, login_user, \
     login_required, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
-import shortuuid, uuid, sqlite3
-import re
+import re, datetime, shortuuid, uuid, sqlite3
 
 app = Flask(__name__)
 
@@ -39,18 +38,18 @@ class User(UserMixin, db_users.Model):
 
 class Message(db_messages.Model):
     id = db_messages.Column(db_messages.Integer, primary_key=True)
-    ownerId = db_messages.Column(db_messages.Integer, nullable=False)
-    postId = db_messages.Column(db_messages.Integer, nullable=False)
+    ownerID = db_messages.Column(db_messages.Integer, nullable=False)
+    postID = db_messages.Column(db_messages.Integer, nullable=False)
     message = db_messages.Column(db_messages.String(500), nullable=False)
-    date = db_messages.Column(db_messages.DateTime)
+    messageDate = db_messages.Column(db_messages.DateTime)
 
 class Post(db_posts.Model):
     id = db_posts.Column(db_posts.Integer, primary_key=True)
-    ownerId = db_posts.Column(db_posts.Integer)
+    ownerID = db_posts.Column(db_posts.Integer)
     header = db_posts.Column(db_posts.String(100), default="Konu Yok")
     body = db_posts.Column(db_posts.String(5000), nullable=False)
     openToComments = db_posts.Column(db_posts.Boolean)
-    date = db_posts.Column(db_posts.DateTime)
+    postDate = db_posts.Column(db_posts.DateTime)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -79,10 +78,9 @@ def login():
     else:
         return render_template("login.html")
 
-
 @app.post('/login')
 def loginUser():
-    # try:
+    try:
         if request.method == "POST":
             email = re.sub(' +', ' ', str(request.form['email']).strip())
             password = str(request.form['password'])
@@ -90,13 +88,19 @@ def loginUser():
             if user:
                 if check_password_hash(user.password, password):
                     login_user(user, remember=True)
-                    return render_template("index.html")
+                    return redirect("/")
                 else:
                     return render_template("login.html", warn="Yanlış Bir Kullanıcı Adı veya Şifre Girdiniz!")
             else:
                 return render_template("login.html", warn="Yanlış Bir Kullanıcı Adı veya Şifre Girdiniz!")
-    # except:
-    #     return render_template("unknownError.html"), 500
+    except:
+        return render_template("unknownError.html"), 500
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 @app.get("/signup")
 def signup():
@@ -115,7 +119,8 @@ def signupUser():
             
             if username == "" or username == " " or password == "" or password == " " or len(password) < 8:
                 return render_template("signup.html", warn=uyari)
-
+            
+            #I used pbkdf2 hash algorithm to be accordence with NIST
             hashed_password = generate_password_hash(password, method='pbkdf2:sha512:80000')
             new_user = User(userName=username, eMail=email, password=hashed_password, isModerator=isModerator)
             db_users.session.add(new_user)
@@ -127,17 +132,12 @@ def signupUser():
     except IntegrityError: #kullanıcı varsa dönecek hata
             return render_template("signup.html", warn="Kullanıcı adı veya E-mail sistemde zaten kayıtlı!")
     
-    #başka bir hata oluşması durumunda unkownError sayfasını gösteriyorum
-    #hataya göre alınacak aksiyonlar farklı olarak belirlenmelidir!
+    #if any other error occurs we will return unknownError page
+    #according to errors we can show appropriate types of error.
     except:
         return render_template("unknownError.html"), 500
 
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return render_template("index.html")
 #user's settings page
 @app.get("/settings")
 @login_required
@@ -157,9 +157,33 @@ def profilePage(username):
     except:
         return render_template("unknownError.html"), 500
 
+#New topic page
+@app.get("/addTopic")
+@login_required
+def addTopic():
+    date = datetime.datetime.now()
+    date = date.strftime("'%b %d, %Y'")
+    return render_template("addTopic.html", date=date)
 
-
-
+@app.post("/addTopic")
+@login_required
+def addTopicToPosts():
+    if request.method == "POST":
+        header = request.form["header"]
+        content = request.form["content"]
+        openToComments = 1 if request.form["openToComments"] == "Yorumlara Açık" else 0
+        ownerID = current_user.id
+        date = datetime.datetime.now()
+        
+        print(header, content, openToComments, ownerID, date)
+        newPost = Post(header=header, body=content, openToComments=openToComments, ownerID=ownerID, postDate=date)
+        db_posts.session.add(newPost)
+        db_posts.session.commit()
+        return render_template("index.html")
+    else:
+        return render_template("unknownError.html")
+# I used default disallow.
+# Because i don't want search engines to index my page.
 @app.get("/robots.txt")
 def robots():
     return send_from_directory("static", path="/static", filename="robots.txt")
