@@ -34,6 +34,11 @@
                               <input required type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Password">
                            </div>
                            <br>
+                           {% if warn %}
+                                 <br>
+                                 <p style="color:red">{{warn}}</p>
+                           {% endif %}
+                           <br>
                            <div class="col-md-12 text-center ">
                               <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Giriş Yap</button>
                            </div>

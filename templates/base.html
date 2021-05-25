@@ -23,6 +23,7 @@
                         <li class="nav-item"><a class="nav-link" href="/about">Hakkında</a></li>
                         {% if current_user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="/profile/{{current_user.userName}}">Profil Sayfası</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/logout">Çıkış Yap</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="/signup">Üye Ol</a></li>
                             <li class="nav-item"><a class="nav-link" href="/login">Giriş Yap</a></li>
@@ -31,7 +32,7 @@
                 </div>
             </div>
         </nav>
-
+        
 
         {% block body %} {% endblock %}
     </div>

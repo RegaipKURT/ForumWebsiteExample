@@ -37,6 +37,10 @@
                               <label for="exampleInputEmail1">Parola</label>
                               <input required type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Parola">
                            </div>
+                           {% if warn %}
+                                 <br>
+                                 <p style="color:red">{{warn}}</p>
+                           {% endif %}
                            <br>
                            <div class="form-group">
                               <p class="text-center">Üye olmadan önce okuyun: <a href="/about">Uyarı!</a></p>

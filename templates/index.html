@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
-{% block body %} 
+{% block body %}
 <!-- Page header with logo and tagline-->
-        <header class="py-5 bg-light border-bottom mb-4">
+        <header class="py-3 bg-light border-bottom mb-4">
             <div class="container">
                 <div class="text-center my-3">
                     <h1 class="fw-bolder">Forum Anasayfası, Hoşgeldiniz!</h1>
@@ -12,16 +12,24 @@
         </header>
         <!-- Page content-->
         <div class="container">
+            {% if current_user.is_authenticated %}
+            <div class="row">
+                <div class="col-lg-10">
+                    <a class="btn btn-success" href="/profile/{{current_user.userName}}">Yeni Konu Oluştur</a>
+                </div>
+            </div>
+            <br>
+            {% endif %}
             <div class="row">
                 <!-- Blog entries-->
                 <div class="col-lg-12">
                     <!-- Featured blog post-->
                     <div class="card mb-4">
                         <div class="card-body">
-                            <div class="small text-muted">January 1, 2021</div>
-                            <h2 class="card-title">Featured Post Title</h2>
-                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-                            <a class="btn btn-primary" href="#!">Read more →</a>
+                            <div class="small text-muted">May 25, 2021</div>
+                            <h2 class="card-title">Açıklama!</h2>
+                            <p class="card-text">Bu forum sitesi örneği deneme amaçlı oluşturulmuştur. Privia Security Staj Programı kapsamında istenilen örnek bir ödev olarak oluşturulmuştur. Sitenin kaynak kodlarına github sayfası üzerinden ulaşılabilir...</p>
+                            <a class="btn btn-primary" href="/about">Tamamını Göster →</a>
                         </div>
                     </div>
                     <!-- Nested row for non-featured blog posts-->
