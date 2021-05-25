@@ -8,7 +8,7 @@ Bu web sitesi örneği Python 3.8.10 ve Flask 2.0.1 versiyonu kullanılarak dene
 Veritabanı SQLite veritabanı kullanılarak oluşturulmuştur. Tek bir database dosyası içinde oluşturulan Users, Messages ve Posts tabloları kullanılarak bir forum sitesindeki en temel işlemler 
 yerine getirilmeye çalışılmıştır.
 
-### ***User*** tablosu için create ifadesi aşağıdaki gibidir:
+### ***User*** tablosu için Create ifadesi aşağıdaki gibidir:
 ```sql
 CREATE TABLE "User" (
 	"id"	INTEGER NOT NULL UNIQUE,
@@ -21,7 +21,7 @@ CREATE TABLE "User" (
 ```
 
 
-### ***Post*** tablosu için create ifadesi:
+### ***Post*** tablosu için Create ifadesi:
 ```sql
 CREATE TABLE "Post" (
 	"id"	INTEGER NOT NULL UNIQUE,
@@ -34,7 +34,7 @@ CREATE TABLE "Post" (
 );
 ```
 
-### Son olarak ***Message*** tablosu için oluşturma ifadesi:
+### Son olarak ***Message*** tablosu için Create ifadesi:
 ```sql
 CREATE TABLE "Message" (
 	"id"	INTEGER NOT NULL UNIQUE,
