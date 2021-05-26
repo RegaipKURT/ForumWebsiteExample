@@ -7,6 +7,7 @@ from flask_login import LoginManager, UserMixin, login_user, \
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 import re, datetime, shortuuid, uuid, sqlite3
+from sqlalchemy import update
 
 app = Flask(__name__)
 
@@ -64,19 +65,106 @@ def page_not_found(e):
 #Homepage
 @app.get("/")
 def index():
-    return render_template("index.html")
+    try:
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        veri = c.execute("SELECT * FROM Post ORDER BY postDate DESC").fetchall()
+        c.close()
+        db.close()
+        return render_template("index.html", veri=veri)
+    except:
+        return render_template("unknownError.html")
 
 #default post page
 @app.get("/post/<int:post_id>")
 def post(post_id):
-    return render_template("post.html")
+    try:
+        post_id = int(post_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        sqlSentence = '''SELECT MSG.id, MSG.ownerID, MSG.postID, MSG.message, 
+            U.id, U.username
+            FROM Message MSG
+            INNER JOIN User U ON U.id = MSG.ownerID
+            WHERE postID={postID}
+        '''.format(postID=post_id)
+        post = c.execute(f"SELECT Post.*, User.username  FROM Post INNER JOIN User ON User.id = Post.ownerID WHERE Post.id={post_id}").fetchone()
+        comments = c.execute(sqlSentence).fetchall()
+        c.close()
+        db.close()
+        return render_template("post.html", veri=post, messages=comments)
+    except:
+        return render_template("unknownError.html")
 
+@app.post("/addComment/<int:post_id>")
+@login_required
+def addCommentToPost(post_id):
+    try:
+        #in order to prevent unauthenticated comments we  
+        #should complete some controls
+        post_id = int(post_id)
+        if current_user.is_authenticated and request.method == "POST":
+            db = sqlite3.connect("./app/database.db")
+            c = db.cursor()
+            isOpen = int(c.execute(f"SELECT openToComments FROM Post WHERE id={post_id}").fetchone()[0])
+            if isOpen:
+                ownerID = int(current_user.id)
+                postID = int(post_id)
+                message = re.sub(' +', ' ', str(request.form['comment']).strip())
+                messageDate = datetime.datetime.now()
+                newComment = Message(ownerID=ownerID, postID=postID, message=message, messageDate=messageDate)
+                db_messages.session.add(newComment)
+                db_messages.session.commit()
+                
+            return redirect(f"/post/{post_id}")
+    except:
+        return render_template("unknownError.html"), 500
+@app.get("/deleteComment/<int:comment_id>")
+@login_required
+def deleteComment(comment_id):
+    try:
+        comment_id = int(comment_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        
+        (isAuth, postID) = c.execute(f"SELECT ownerID, postID FROM Message WHERE id={comment_id}").fetchone()
+        
+        if current_user.isModerator or isAuth == current_user.id:
+            c.execute(f"DELETE FROM Message WHERE id={comment_id}")
+            db.commit()
+        return redirect(f"/post/{postID}")
+    except:
+        return render_template("unknownError.html")
+
+@app.get("/deleteTopic/<int:post_id>")
+@login_required
+def deleteTopic(post_id):
+    try:
+        post_id = int(post_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        
+        isAuth = c.execute(f"SELECT ownerID FROM Post WHERE id={post_id}").fetchone()[0]
+
+        # we can delete messages belong to topic.
+        if current_user.isModerator or isAuth == current_user.id:
+            c.execute(f"DELETE FROM Post WHERE id={post_id}")
+            c.execute(f"DELETE FROM Message WHERE postID={post_id}")
+            db.commit()
+        return redirect(f"/")
+    except:
+        return render_template("unknownError.html"), 500
+
+    
 @app.get("/login")
 def login():
-    if current_user.is_authenticated:
-        return render_template("/profile.html")
-    else:
-        return render_template("login.html")
+    try:
+        if current_user.is_authenticated:
+            return render_template("/profile.html")
+        else:
+            return render_template("login.html")
+    except:
+        return render_template("unknownError.html")
 
 @app.post('/login')
 def loginUser():
@@ -99,8 +187,11 @@ def loginUser():
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()
-    return redirect("/")
+    try:
+        logout_user()
+        return redirect("/")
+    except:
+        return render_template("unknownError.html"), 500
 
 @app.get("/signup")
 def signup():
@@ -125,8 +216,7 @@ def signupUser():
             new_user = User(userName=username, eMail=email, password=hashed_password, isModerator=isModerator)
             db_users.session.add(new_user)
             db_users.session.commit()
-            
-            print(hashed_password, username, password, email)
+
             return render_template("signup.html", warn="Kullanıcı eklendi.\nGiriş yapmak için giriş sayfasını kullanın.\n")
     
     except IntegrityError: #kullanıcı varsa dönecek hata
@@ -142,7 +232,7 @@ def signupUser():
 @app.get("/settings")
 @login_required
 def setting():
-    return current_user.userId
+    return current_user.id
 
 @app.get("/about")
 def about():
@@ -168,20 +258,98 @@ def addTopic():
 @app.post("/addTopic")
 @login_required
 def addTopicToPosts():
-    if request.method == "POST":
-        header = request.form["header"]
-        content = request.form["content"]
-        openToComments = 1 if request.form["openToComments"] == "Yorumlara Açık" else 0
-        ownerID = current_user.id
-        date = datetime.datetime.now()
-        
-        print(header, content, openToComments, ownerID, date)
-        newPost = Post(header=header, body=content, openToComments=openToComments, ownerID=ownerID, postDate=date)
-        db_posts.session.add(newPost)
-        db_posts.session.commit()
-        return render_template("index.html")
-    else:
+    try:
+        if request.method == "POST":
+            header = request.form["header"]
+            content = request.form["content"]
+            openToComments = 1 if request.form["openToComments"] == "Yorumlara Açık" else 0
+            ownerID = current_user.id
+            date = datetime.datetime.now()
+            
+            newPost = Post(header=header, body=content, openToComments=openToComments, ownerID=ownerID, postDate=date)
+            db_posts.session.add(newPost)
+            db_posts.session.commit()
+            return redirect("/")
+        else:
+            return render_template("unknownError.html")
+    except:
         return render_template("unknownError.html")
+
+
+@app.get("/sealTopic/<int:post_id>")
+@login_required
+def sealTopic(post_id):
+    try:
+        post_id = int(post_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        ownerID = db_posts.session.query(Post).get(post_id).ownerID
+        
+        if current_user.isModerator or current_user.id == ownerID:
+            post = db_posts.session.query(Post).get(post_id)
+            post.openToComments = 0
+            db_posts.session.commit()
+        return redirect(f"/post/{post_id}")
+        
+    except:
+        return render_template("unknownError.html")
+
+
+@app.get("/openTopic/<int:post_id>")
+@login_required
+def openTopic(post_id):
+    try:
+        post_id = int(post_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        ownerID = db_posts.session.query(Post).get(post_id).ownerID
+        if current_user.isModerator or current_user.id == ownerID:
+            post = db_posts.session.query(Post).get(post_id)
+            post.openToComments = 1
+            db_posts.session.commit()
+            
+        return redirect(f"/post/{post_id}")
+    except:
+        return render_template("unknownError.html")
+
+
+@app.get("/editTopic/<int:post_id>")
+@login_required
+def editTopic(post_id):
+    post_id = int(post_id)
+    db = sqlite3.connect("./app/database.db")
+    c = db.cursor()
+    veri = c.execute(f"SELECT * FROM Post WHERE id={post_id}").fetchone()
+    
+    return render_template("addTopic.html", veri=veri)
+
+
+@app.post("/editTopicSave/<int:post_id>")
+@login_required
+def editTopicSave(post_id):
+    # try:
+        post_id = int(post_id)
+        header = str(request.form["header"])
+        content = str(request.form["content"])
+        
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        isAuth = int(c.execute(f"SELECT ownerID FROM Post WHERE id={post_id}").fetchone()[0])
+        
+        if current_user.id == isAuth:
+            isOpen = 1 if request.form["openToComments"] == "Yorumlara Açık" else 0
+
+            post = db_posts.session.query(Post).get(post_id)
+            post.body = content
+            post.header = header
+            post.openToComments = isOpen
+            
+            db_posts.session.commit()
+            
+        return redirect(f"/post/{post_id}")
+    # except:
+    #     return render_template("unknownError.html")
+
 # I used default disallow.
 # Because i don't want search engines to index my page.
 @app.get("/robots.txt")

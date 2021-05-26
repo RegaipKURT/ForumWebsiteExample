@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 {% block body %}
 <!-- Page header with logo and tagline-->
         <header class="py-3 bg-light border-bottom mb-4">
@@ -34,46 +35,24 @@
                     </div>
                     <!-- Nested row for non-featured blog posts-->
                     <div class="row">
+
+                        {% if veri %}
+                        {% for i in veri %}
                         <div class="col-lg-6">
                             <!-- Blog post-->
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <div class="small text-muted">January 1, 2021</div>
-                                    <h2 class="card-title h4">Post Title</h2>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.</p>
-                                    <a class="btn btn-primary" href="#!">Read more →</a>
-                                </div>
-                            </div>
-                            <!-- Blog post-->
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="small text-muted">January 1, 2021</div>
-                                    <h2 class="card-title h4">Post Title</h2>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.</p>
-                                    <a class="btn btn-primary" href="#!">Read more →</a>
+                                    <div class="small text-muted">{{i[5][:10]}}</div>
+                                    <h2 class="card-title h4">{{i[2]}}</h2>
+                                    <p class="card-text">{{i[3][:150]}}...</p>
+                                    <a class="btn btn-primary" href="/post/{{i[0]}}">Tamamını Göster →</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <!-- Blog post-->
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="small text-muted">January 1, 2021</div>
-                                    <h2 class="card-title h4">Post Title</h2>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.</p>
-                                    <a class="btn btn-primary" href="#!">Read more →</a>
-                                </div>
-                            </div>
-                            <!-- Blog post-->
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="small text-muted">January 1, 2021</div>
-                                    <h2 class="card-title h4">Post Title</h2>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam.</p>
-                                    <a class="btn btn-primary" href="#!">Read more →</a>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
+                        {% else %}
+                            <p class="lead mb-0">Flask ve Bootstrap Forum Sitesi Örneği</p>
+                        {% endif %}
                     </div>
                     <!-- Pagination-->
                     <!-- <nav aria-label="Pagination">

@@ -10,64 +10,81 @@
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- Post title-->
-                            <h1 class="fw-bolder mb-1">Welcome to Blog Post!</h1>
+                            <h1 class="fw-bolder mb-1">{{veri[2]}}</h1>
                             <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">Posted on January 1, 2021 by Start Bootstrap</div>
+                            <div class="text-muted fst-italic mb-2">Posted on {{veri[5][:16]}} by {{veri[6]}}</div>
                             <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
+                            <a class="badge bg-secondary text-decoration-none link-light" href="https://github.com/RegaipKURT/" target="_blank">GitHub Project Page</a>
                         </header>
                         <!-- Preview image figure-->
-                        <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>
+                        {% if current_user.isModerator or current_user.id == veri[1] %}
+                        <section class="mb-5">
+                            <a href="/deleteTopic/{{veri[0]}}" class="btn btn-block mybtn btn-danger tx-tfm">
+                                Konuyu Sil
+                                <img class="rounded-circle" width="24" src="{{ url_for('static', filename='img/trash.png') }}" alt="delete">
+                            </a>
+                            {% if veri[4] ==1 %}
+                            <a href="/sealTopic/{{veri[0]}}" class="btn btn-block mybtn btn-warning tx-tfm">
+                                Yoruma Kapat
+                            </a>
+                            {% else %}
+                                <a href="/openTopic/{{veri[0]}}" class="btn btn-block mybtn btn-success tx-tfm">
+                                    Yoruma Aç
+                                </a>
+                            {% endif %}
+                        </section>
+                        {% endif %}
                         <!-- Post content-->
                         <section class="mb-5">
-                            <p class="fs-5 mb-4">Science is an enterprise that should be cherished as an activity of the free human mind. Because it transforms who we are, how we live, and it gives us an understanding of our place in the universe.</p>
-                            <p class="fs-5 mb-4">The universe is large and old, and the ingredients for life as we know it are everywhere, so there's no reason to think that Earth would be unique in that regard. Whether of not the life became intelligent is a different question, and we'll see if we find that.</p>
-                            <p class="fs-5 mb-4">If you get asteroids about a kilometer in size, those are large enough and carry enough energy into our system to disrupt transportation, communication, the food chains, and that can be a really bad day on Earth.</p>
-                            <h2 class="fw-bolder mb-4 mt-5">I have odd cosmic thoughts every day</h2>
-                            <p class="fs-5 mb-4">For me, the most fascinating interface is Twitter. I have odd cosmic thoughts every day and I realized I could hold them to myself or share them with people who might be interested.</p>
-                            <p class="fs-5 mb-4">Venus has a runaway greenhouse effect. I kind of want to know what happened there because we're twirling knobs here on Earth without knowing the consequences of it. Mars once had running water. It's bone dry today. Something bad happened there as well.</p>
+                            <p class="fs-5 mb-4">{{veri[3]}}</p>
                         </section>
                     </article>
+
+                    {% if current_user.id == veri[1] %}
+                        <section class="mb-5">
+                            <a href="/editTopic/{{veri[0]}}" class="btn btn-block mybtn btn-warning tx-tfm">
+                                Düzenle
+                            </a>
+                        </section>
+                    {% endif %}
                     <!-- Comments section-->
                     <section class="mb-5">
                         <div class="card bg-light">
                             <div class="card-body">
                                 <!-- Comment form-->
-                                <form class="mb-4"><textarea class="form-control" rows="3" placeholder="Join the discussion and leave a comment!"></textarea></form>
-                                <!-- Comment with nested comments-->
-                                <div class="d-flex mb-4">
-                                    <!-- Parent comment-->
-                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                    <div class="ms-3">
-                                        <div class="fw-bold">Commenter Name</div>
-                                        If you're going to lead a space frontier, it has to be government; it'll never be private enterprise. Because the space frontier is dangerous, and it's expensive, and it has unquantified risks.
-                                        <!-- Child comment 1-->
-                                        <div class="d-flex mt-4">
-                                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                            <div class="ms-3">
-                                                <div class="fw-bold">Commenter Name</div>
-                                                And under those conditions, you cannot establish a capital-market evaluation of that enterprise. You can't get investors.
-                                            </div>
-                                        </div>
-                                        <!-- Child comment 2-->
-                                        <div class="d-flex mt-4">
-                                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                            <div class="ms-3">
-                                                <div class="fw-bold">Commenter Name</div>
-                                                When you put money directly to a problem, it makes a good headline.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% if current_user.is_authenticated and veri[4] == 1 %}
+                                <form action="/addComment/{{ veri[0] }}" method="POST" class="mb-4">
+                                    <textarea required name="comment" class="form-control" rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                                    <br>
+                                    <button type="submit" class="btn btn-block mybtn btn-primary tx-tfm">Yorum Yap</button>
+                                </form>
+                                {% else %}
+                                <div class="text-muted fst-italic mb-2">Bu başlık yorumlara kapatılmış veya yorum yapmak için  giriş yapmanız gerekiyor!</div>
+                                {% endif %}
+
                                 <!-- Single comment-->
+                                {% if messages %}
+                                {% for msg in messages %}
                                 <div class="d-flex">
-                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                    <div class="ms-3">
-                                        <div class="fw-bold">Commenter Name</div>
-                                        When I look at the universe and all the ways the universe wants to kill us, I find it hard to reconcile that with statements of beneficence.
+                                    <div class="col-lg-11">
+                                        <!-- <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div> -->
+                                        <div class="ms-3">
+                                            <div class="fw-bold">{{ msg[5] }}</div>
+                                            {{ msg[3] }}
+                                        </div>
                                     </div>
+                                    {% if current_user.id == msg[1] or current_user.isModerator %}
+                                    <div class="col-lg-1 offset-right-0">
+                                        <a class="btn btn-danger pull-right" href="/deleteComment/{{msg[0]}}">
+                                            <img class="rounded-circle" width="24" src="{{ url_for('static', filename='img/trash.png') }}" alt="delete">
+                                        </a>
+                                    </div>
+                                    {% endif %}
                                 </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="text-muted fst-italic mb-2">Henüz yorum yapılmadı!</div>
+                                {% endif %}
                             </div>
                         </div>
                     </section>

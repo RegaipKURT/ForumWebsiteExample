@@ -12,7 +12,11 @@
                             <!-- Post title-->
                             <h1 class="fw-bolder mb-1">Başlık Oluşturma Sayfasına Hoşgeldiniz!</h1>
                             <!-- Post meta content-->
+                            {% if not veri %}
                             <div class="text-muted fst-italic mb-2">Will be posted on {{date}} by {{current_user.userName}}</div>
+                            {% else %}
+                            <div class="text-muted fst-italic mb-2">Will be posted on {{veri[5][:10]}} by {{current_user.userName}}</div>
+                            {% endif %}
                             <!-- Post categories-->
                             <a class="badge bg-secondary text-decoration-none link-light" target="_blank" href="https://github.com/RegaipKURT/">Project Github Page</a>
                         </header>
@@ -26,16 +30,28 @@
                         <div class="card bg-light">
                             <div class="card-body">
                                 <!-- Comment form-->
+                                {% if veri %}
+                                <form class="mb-4" action="/editTopicSave/{{veri[0]}}" method="POST">
+                                {% else %}
                                 <form class="mb-4" action="/addTopic" method="POST">
+                                {% endif %}
                                     <br>
                                     <div class="form-group">
                                         <label for="header">Başlık</label>
+                                        {% if veri %}
+                                        <textarea required class="form-control" rows="1" placeholder="Lütfen Konu Başlığınızı Buraya Yazın!" name="header" id="header">{{ veri[2] }}</textarea>
+                                        {% else %}
                                         <textarea required class="form-control" rows="1" placeholder="Lütfen Konu Başlığınızı Buraya Yazın!" name="header" id="header"></textarea>
+                                        {% endif %}
                                     </div>
                                     <br>
                                     <div class="form-group">
                                         <label for="content">İçerik</label>
+                                        {% if veri %}
+                                        <textarea required class="form-control" rows="5" placeholder="Konu İçeriğini Buraya Yazın!" name="content" id="content">{{ veri[3] }}</textarea>
+                                        {% else %}
                                         <textarea required class="form-control" rows="5" placeholder="Konu İçeriğini Buraya Yazın!" name="content" id="content"></textarea>
+                                        {% endif %}
                                     </div>
                                     <br>
                                     <div class="form-group">
@@ -47,7 +63,11 @@
                                     </div>
                                     <br>
                                     <div class="col-md-12 text-center ">
+                                        {% if veri %}
                                         <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Konu Başlığını Yayınla</button>
+                                        {% else %}
+                                        <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Konu Başlığını Yayınla</button>
+                                        {% endif %}
                                     </div>
                                 </form>
                                 <!-- Comment with nested comments-->
