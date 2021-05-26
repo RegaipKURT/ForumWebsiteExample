@@ -14,7 +14,7 @@
                             <!-- Post meta content-->
                             <div class="text-muted fst-italic mb-2">Posted on {{veri[5][:16]}} by {{veri[6]}}</div>
                             <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="https://github.com/RegaipKURT/" target="_blank">GitHub Project Page</a>
+                            <a class="badge bg-secondary text-decoration-none link-light" href="/profile/{{veri[6]}}" target="_blank">Visit Profile</a>
                         </header>
                         <!-- Preview image figure-->
                         {% if current_user.isModerator or current_user.id == veri[1] %}
@@ -69,7 +69,7 @@
                                     <div class="col-lg-11">
                                         <!-- <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div> -->
                                         <div class="ms-3">
-                                            <div class="fw-bold">{{ msg[5] }}</div>
+                                            <div class="fw-bold"><a href="/profile/{{ msg[5] }}">{{ msg[5] }}</a> </div>
                                             {{ msg[3] }}
                                         </div>
                                     </div>

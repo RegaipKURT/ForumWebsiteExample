@@ -10,27 +10,37 @@
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- Post title-->
-                            <h1 class="fw-bolder mb-1">Profil Sayfası</h1>
-                            <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">Posted on May 25, 2021 by Regaip Kurt</div>
-                            <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="https://github.com/RegaipKURT/">GitHub Page</a>
+                            <h1 class="fw-bolder mb-1">Profil Sayfası: {{ username }}</h1>
                         </header>
-                        <h2 class="fw-bolder mb-4 mt-5">Açıklama</h2>
+                        <h2 class="fw-bolder mb-4 mt-5">Oluşturulan Başlıklar</h2>
                        <!-- Post content-->
                         <section class="mb-5">
-                            <p class="fs-5 mb-4">Bu forum sitesi örneği deneme amaçlı oluşturulmuştur.</p>
-                            <p class="fs-5 mb-4">Privia Security Staj Programı kapsamında istenilen örnek bir ödev olarak oluşturulmuştur. Sitenin kaynak kodlarına github sayfası üzerinden ulaşılabilir. </p>
-                            <p class="fs-5 mb-4">GitHub Proje Sayfası: <a href="https://github.com/RegaipKURT/ForumWebsiteExample"> RegaipKURT/ForumWebsiteExample</a></p>
-                            
-                            <h2 class="fw-bolder mb-4 mt-5">Önemli Uyarı!</h2>
-                            <p class="fs-5 mb-4">Bu siteye başka bir yerde kullandığınız kullanıcı adı ve şifreler ile kaydolmayınız! Deneme amaçlı ve hızlı bir şekilde oluşturulduğu için güvenlik riskleri bulunabilir!</p>
-                            <p class="fs-5 mb-4">Herhangi bir sorun uluşması durumunda aşağıdaki hesaplardan iletişime geçebilirsiniz:</p>
-                            <p class="fs-5 mb-4">
-                                LinkedIn:<a href="https://www.linkedin.com/in/regaipkurt/"> regaipkurt/</a> 
-                                <br>
-                                Twitter: <a href="https://twitter.com/kodyazanbirsair"> kodyazanbirsair</a>
-                            </p>
+                            {% if topics %}
+                            <ul>
+                                {% for topic in topics %}
+                                <li>
+                                    <a href="/post/{{topic[0]}}">{{topic[2]}}</a> 
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <div class="text-muted fst-italic mb-2">Hiç başlık oluşturulmadı!</div>
+                            {% endif %}
+                        </section>
+                        <h2 class="fw-bolder mb-4 mt-5">Yapılan Yorumlar</h2>
+                       <!-- Post content-->
+                        <section class="mb-5">
+                            {% if messages %}
+                            <ul>
+                                {% for message in messages %}
+                                <li>
+                                    <a href="/post/{{message[2]}}">{{message[3]}}</a> 
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <div class="text-muted fst-italic mb-2">Hiç yorum yapılmadı!</div>
+                            {% endif %}
                         </section>
                     </article>
                 </div>

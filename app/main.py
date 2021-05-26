@@ -7,7 +7,6 @@ from flask_login import LoginManager, UserMixin, login_user, \
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 import re, datetime, shortuuid, uuid, sqlite3
-from sqlalchemy import update
 
 app = Flask(__name__)
 
@@ -240,10 +239,16 @@ def about():
 
 #user profile page defined with username
 @app.get("/profile/<string:username>")
-@login_required
 def profilePage(username):
     try:
-        return render_template(f"profile/{username}.html")
+        username = str(username)
+        ownerID = User.query.filter_by(userName=username).first().id
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        topics = c.execute(f"SELECT * FROM Post WHERE ownerID = {ownerID}").fetchall()
+        messages = c.execute(f"SELECT * FROM Message WHERE ownerID = {ownerID}").fetchall()
+        
+        return render_template(f"profile.html", topics=topics, messages=messages, username=username)
     except:
         return render_template("unknownError.html"), 500
 
