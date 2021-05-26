@@ -218,7 +218,7 @@ def signupUser():
 
             return render_template("signup.html", warn="Kullanıcı eklendi.\nGiriş yapmak için giriş sayfasını kullanın.\n")
     
-    except IntegrityError: #kullanıcı varsa dönecek hata
+    except IntegrityError: #return page with warning if user exists.
             return render_template("signup.html", warn="Kullanıcı adı veya E-mail sistemde zaten kayıtlı!")
     
     #if any other error occurs we will return unknownError page
@@ -227,11 +227,12 @@ def signupUser():
         return render_template("unknownError.html"), 500
 
 
-#user's settings page
-@app.get("/settings")
-@login_required
-def setting():
-    return current_user.id
+#user's settings page. 
+#But i didn't use. Because these application is just for trial purpose
+#@app.get("/settings")
+#@login_required
+#def setting():
+#    return current_user.id
 
 @app.get("/about")
 def about():
@@ -256,9 +257,12 @@ def profilePage(username):
 @app.get("/addTopic")
 @login_required
 def addTopic():
-    date = datetime.datetime.now()
-    date = date.strftime("'%b %d, %Y'")
-    return render_template("addTopic.html", date=date)
+    try:
+        date = datetime.datetime.now()
+        date = date.strftime("'%b %d, %Y'")
+        return render_template("addTopic.html", date=date)
+    except:
+        return render_template("unknownError.html")
 
 @app.post("/addTopic")
 @login_required
@@ -321,18 +325,21 @@ def openTopic(post_id):
 @app.get("/editTopic/<int:post_id>")
 @login_required
 def editTopic(post_id):
-    post_id = int(post_id)
-    db = sqlite3.connect("./app/database.db")
-    c = db.cursor()
-    veri = c.execute(f"SELECT * FROM Post WHERE id={post_id}").fetchone()
-    
-    return render_template("addTopic.html", veri=veri)
+    try:
+        post_id = int(post_id)
+        db = sqlite3.connect("./app/database.db")
+        c = db.cursor()
+        veri = c.execute(f"SELECT * FROM Post WHERE id={post_id}").fetchone()
+
+        return render_template("addTopic.html", veri=veri)
+    except:
+        return render_template("unknownError.html")
 
 
 @app.post("/editTopicSave/<int:post_id>")
 @login_required
 def editTopicSave(post_id):
-    # try:
+    try:
         post_id = int(post_id)
         header = str(request.form["header"])
         content = str(request.form["content"])
@@ -352,8 +359,8 @@ def editTopicSave(post_id):
             db_posts.session.commit()
             
         return redirect(f"/post/{post_id}")
-    # except:
-    #     return render_template("unknownError.html")
+    except:
+        return render_template("unknownError.html")
 
 # I used default disallow.
 # Because i don't want search engines to index my page.
