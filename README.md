@@ -6,7 +6,7 @@ Bu web sitesi örneği Python 3.8.10 ve Flask 2.0.1 versiyonu kullanılarak dene
 ***Flask 2.0 versiyonundan itibaren değişmiş olan yeni routing metodları kullanıldığından 2.0 öncesi versiyonlarda hata verecektir!***
 
 Uygulamanın HerokuApp üzerinde çalışan versiyonu için
-<a target="_blank" href="https://forum-website-regaipkurt.herokuapp.com/">tıklayın!</a>
+<a target="blank" href="https://forum-website-regaipkurt.herokuapp.com/">tıklayın!</a>
 
 ## 1. Veritabanı Yapısı
 Veritabanı SQLite veritabanı kullanılarak oluşturulmuştur. Tek bir database dosyası içinde oluşturulan Users, Messages ve Posts tabloları kullanılarak bir forum sitesindeki en temel işlemler 
