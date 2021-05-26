@@ -75,6 +75,14 @@ CREATE TABLE "Message" (
 
 Bu adımların ardından uygulamanız heroku üzerinde deploy edilecektir.
 
+***b) Sunucu veya Yerel Ağ Üzerinde Çalıştırma*** 
+
+- ```pip install -r requirements.txt``` komutuyla bağımlılıkları yükleyin
+- Bilgisayarınızda çalıştırmak için ```python wsgi.py``` komutunu çalıştırın.
+- Sunucular için gunicorn ile wsgi.py dosyasını çalıştırabilirsiniz. Linux için örnek: ```gunicorn3 -w3 wsgi.py```
+
+Python virtual environment için Pipfile dosyaları eklenmiştir.
+
 ## ÖNEMLİ NOT:
 
 Uygulama deneme amaçlı yapılmış ve güvenlik bakış açısıyla test edilmemiştir. Bu yüzden heroku üzerinde çalışan sisteme kaydolurken lütfen başka sistemlerde kullandığınız kullanıcı adı ve parolası ile kayıt yapmayın.
